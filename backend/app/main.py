@@ -14,6 +14,9 @@ from app.routers import (
     preferences as preferences_router,
     faculty as faculty_router,
         allotment as allotment_router,
+            admin_dashboard as admin_dashboard_router,
+                export as export_router,
+                    notifications as notifications_router,
 )
 from app.services.bootstrap import ensure_main_admin
 from app.utils.logging import configure_logging
@@ -55,6 +58,9 @@ app.include_router(courses_router.router)
 app.include_router(preferences_router.router)
 app.include_router(faculty_router.router)
 app.include_router(allotment_router.router)
+app.include_router(admin_dashboard_router.router)
+app.include_router(export_router.router)
+app.include_router(notifications_router.router)
 
 @app.get("/health")
 def health():

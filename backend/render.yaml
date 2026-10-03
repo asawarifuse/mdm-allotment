@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: mdm-allotment-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt && alembic upgrade head
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: DEBUG
+        value: "false"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: FRONTEND_ORIGIN
+        sync: false
+      - key: MAIN_ADMIN_ID
+        value: admin
+      - key: MAIN_ADMIN_PASSWORD
+        sync: false
+      - key: MAIN_ADMIN_NAME
+        value: Administration Head
+      - key: CAPTCHA_ENABLED
+        value: "false"
+      - key: RECAPTCHA_SITE_KEY
+        sync: false
+      - key: RECAPTCHA_SECRET_KEY
+        sync: false
+      - key: LOG_LEVEL
+        value: INFO
+      - key: SENTRY_DSN
+        sync: false

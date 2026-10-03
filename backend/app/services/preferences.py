@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 
 from app.models.course import Course
 from app.models.preference import Preference
+from app.models.student import Student
 from app.services.audit import write_audit
 
 
@@ -21,10 +22,19 @@ def submit_preferences(db: Session, uid: str, course_ids: list[int]) -> list[Pre
     if len(course_ids) != 6 or len(set(course_ids)) != 6:
         raise ValueError("Exactly 6 unique courses required")
 
-    existing_ids = {c.id for c in db.query(Course.id).all()}
+    student = db.query(Student).filter(Student.uid == uid).first()
+    if not student:
+        raise ValueError("Student not found")
+
     for cid in course_ids:
-        if cid not in existing_ids:
+        course = db.query(Course).filter(Course.id == cid).first()
+        if not course:
             raise ValueError(f"Course id {cid} does not exist")
+        if course.branch_name == student.parent_branch:
+            raise ValueError(
+                f"You cannot prefer '{course.course_name}' — it is offered by your own branch "
+                f"({student.parent_branch})."
+            )
 
     for rank, cid in enumerate(course_ids, start=1):
         db.add(Preference(student_uid=uid, course_id=cid, rank=rank))
